@@ -1,54 +1,45 @@
 // error-handler.ts
 import winston, { Logger } from 'winston';
-import AppError from './AppError';
+import AppError from '../class/AppError';
 import { Pool } from 'pg';
 import ErrorTransport from './ErrorTransport';
-import databaseInstance from '../config/Database';
 
-class ErrorHandler {
-  private static instance: ErrorHandler;
+export default class ErrorHandler {
   private logger: Logger;
   private pool: Pool;
 
-  private constructor(logger: Logger, pool: Pool) {
-    this.logger = logger;
+  constructor(pool: Pool, logger?: Logger) {
     this.pool = pool;
+    this.logger = logger ?? this.createDefaultLogger();
   }
 
-  public static initialize(pool: Pool, logger?: Logger): ErrorHandler {
-    if (!ErrorHandler.instance) {
-      if (!logger) {
-        logger = winston.createLogger({
-          level: 'info',
-          format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.json()
-          ),
-          transports: [
+  private createDefaultLogger(): Logger {
+    const logger = winston.createLogger({
+        level: 'info',
+        format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+        ),
+        transports: [
             new ErrorTransport({
-              pool: pool,
-              level: 'error',
-              tableName: 'error_logs',
-              serviceName: "platform"
+                pool: this.pool,
+                level: 'error',
+                tableName: 'error_logs',
+                serviceName: "platform"
             }),
             new winston.transports.Console({
-              format: winston.format.simple()
+              format: winston.format.combine(
+                winston.format(info => {
+                  delete info.stack; // Strip stack trace
+                  return info;
+                })(),
+                winston.format.simple()
+              )
             })
-          ]
-        });
-      }
-      ErrorHandler.instance = new ErrorHandler(logger, pool);
-    }
-    return ErrorHandler.instance;
-  }
+        ]
+    });
 
-  public static async getInstance(): Promise<ErrorHandler> {
-    if (!ErrorHandler.instance) {
-        const pool = await databaseInstance.getPool()
-        this.initialize(pool)
-    }
-
-    return ErrorHandler.instance;
+    return logger;
   }
 
   public async handleError(error: unknown): Promise<void> {
@@ -114,4 +105,3 @@ class ErrorHandler {
     return result.rows;
   }
 }
-

@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.1.0",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",

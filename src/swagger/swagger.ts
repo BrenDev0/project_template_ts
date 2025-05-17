@@ -1,24 +1,37 @@
 import swaggerAutogen from 'swagger-autogen';
+const options = {
+  openapi: "3.0.0" 
+ 
+};
 
 const doc = {
   info: {
-    title: 'Brokers',
-    description: 'Endpoints',
+    title: '',
+    description: '',
     version: '1.0.0',  
   },
-  host: 'brokers-production.up.railway.app',
+  host: '',
   basePath: '/',  
   schemes: ['https'],
   paths: {}, 
   components: {
     securitySchemes: {
-      
+      bearerAuth: {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+        description: 'Enter JWT token with **Bearer** prefix. Example: "Bearer {token}"'
+      }
     },
+    schemas: {
+    }
   },
 };
 
 const outputFile = './swagger.json';  
-const endpointsFiles = ['./src/swagger/endpoints.ts'];    
+const endpointsFiles = [
+  './src/routes/temp.ts',
+];    
 
 
-swaggerAutogen()(outputFile, endpointsFiles, doc);
+swaggerAutogen(options)(outputFile, endpointsFiles, doc);

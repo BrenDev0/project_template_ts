@@ -29,9 +29,9 @@ export default class ErrorTransport extends Transport {
     this.serviceName = options.serviceName
   }
 
-  async log(info: ErrorLog, callback: Function) {
+  async log(info: ErrorLog, callback: () => void): Promise<void> {
     try {
-      await this.pool.query(
+     const reults = await this.pool.query(
         `INSERT INTO ${this.tableName} 
         (level, error_name, message, stack, context, is_operational, service_name)
         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -45,9 +45,11 @@ export default class ErrorTransport extends Transport {
           this.serviceName
         ]
       );
+
+      console.log(reults.rows)
     } catch (error) {
       console.error('Failed to write log to db:', error);
     }
-    callback();
+    setImmediate(callback);
   }
 }

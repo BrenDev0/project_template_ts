@@ -9,13 +9,12 @@ export default class BaseQueries {
         this.table = table;
     }
 
-    async insert(cols: string[], values: any[]): Promise<QueryResult> {
+    async insertQuery(cols: string[], placeholders: any[], values: any[]): Promise<any> {
         try {
-            const placeholders = cols.map((_, i) => `$${i + 1}`).join(", ")
             const sqlInsert =  `
                 INSERT INTO ${this.table}
                 (${cols.join(", ")})
-                values (${placeholders})
+                values (${placeholders.join(", ")})
                 RETURNING *;
             `;
 
@@ -24,44 +23,39 @@ export default class BaseQueries {
                 values
             );
 
-            return result.rows[0];
+            return result.rows
         } catch (error) {
             console.log("Error in basequery insert::: ", error);
             throw error;
         }
     }
 
-    async Select(where: string, values: any[]): Promise<QueryResult[]> {
+    async selectQuery(whereStatement?: string, values: any[] = []): Promise<any[]> {
         try {
             const sqlSelect = `
-                SELECT * FROM ${this.table} WHERE ${where};
+                SELECT * FROM ${this.table}
+                ${whereStatement ? `WHERE ${whereStatement}` : ''};
             `;
 
-            const result = await this.pool.query(
-                sqlSelect,
-                values
-            );
+            const result = await this.pool.query(sqlSelect, values);
 
-            return result.rows; 
+            return result.rows;
         } catch (error) {
             console.log("Error in basequery select:::", error);
             throw error;
         }
     }
 
-    async update(data: Record<string, any>, where: string, indentifier: number | string): Promise<QueryResult> {
+    async updateQuery(data: Record<string, any>, whereStaement: string, values: any[]): Promise<any> {
         try {
             const clauses = Object.keys(data).map((key, i) => `${key} = $${i + 1}` );
-            let values = Object.values(data);
-
+           
             const sqlUpdate = `
                 UPDATE ${this.table}
                 SET ${clauses}
-                WHERE ${where} = $${Object.keys(data).length + 1}
+                WHERE ${whereStaement}
                 RETURNING *;
             `;
-
-            values.push(indentifier);
 
             const result = await this.pool.query(
                 sqlUpdate,
@@ -75,11 +69,11 @@ export default class BaseQueries {
         }
     }
 
-    async delete(where: string, values: any[]): Promise<QueryResult> {
+    async deleteQuery(whereStatment: string, values: any[]): Promise<any> {
         try {
             const sqlDelete = `
                 DELETE FROM ${this.table} 
-                WHERE ${where} 
+                WHERE ${whereStatment} 
                 RETURNING *;
             `;
 
@@ -88,7 +82,7 @@ export default class BaseQueries {
                 values
             );
 
-            return result.rows[0];
+            return result.rows;
         } catch (error) {
             console.log("Error in basequery delete::: ", error);
             throw error;

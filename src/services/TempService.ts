@@ -2,11 +2,8 @@ import { Pool } from "pg";
 import BaseQueries from "../class/BaseQueries";
 
 export default class TempService extends BaseQueries {
-    private cols: string[];
-
     constructor(pool: Pool) {
         super(pool, "");
-        this.cols = [];
     }
 
     async create(): Promise<any> {
