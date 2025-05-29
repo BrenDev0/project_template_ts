@@ -1,6 +1,6 @@
 // error-handler.ts
 import winston, { Logger } from 'winston';
-import AppError from '../class/AppError';
+import AppError from './AppError';
 import { Pool } from 'pg';
 import ErrorTransport from './ErrorTransport';
 

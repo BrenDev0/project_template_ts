@@ -1,4 +1,4 @@
-import AppError from "../class/AppError";
+import AppError from "./AppError";
 
 export class AuthenticationError extends AppError {
   constructor(message = 'Authentication failed', context?: Record<string, unknown>) {
@@ -65,3 +65,4 @@ export class ValidationError extends AppError {
     this.name = 'ValidationError';
   }
 }
+

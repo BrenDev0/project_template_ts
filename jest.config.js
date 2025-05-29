@@ -17,7 +17,7 @@ module.exports = {
       testEnvironment: "node",
       testMatch: ["**/__tests__/e2e/**/*.test.ts"],
       moduleNameMapper: {
-        "^@/(.*)$": "<rootDir>/__tests__/$1"
+        "^@/(.*)$": "<rootDir>/src/$1"
       }
     },
     {
@@ -26,7 +26,7 @@ module.exports = {
       testEnvironment: "node",
       testMatch: ["**/__tests__/unit/**/*.test.ts"],
       moduleNameMapper: {
-        "^@/(.*)$": "<rootDir>/__tests__/$1"
+        "^@/(.*)$": "<rootDir>/src/$1"
       }
     }
   ]

@@ -6,8 +6,8 @@ const options = {
 
 const doc = {
   info: {
-    title: '',
-    description: '',
+    title: 'Project',
+    description: 'Endpoints',
     version: '1.0.0',  
   },
   host: '',
@@ -23,14 +23,14 @@ const doc = {
         description: 'Enter JWT token with **Bearer** prefix. Example: "Bearer {token}"'
       }
     },
-    schemas: {
-    }
+    schemas: {}
   },
 };
 
 const outputFile = './swagger.json';  
 const endpointsFiles = [
-  './src/routes/temp.ts',
+'routes'
+  
 ];    
 
 

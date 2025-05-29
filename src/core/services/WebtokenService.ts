@@ -2,7 +2,7 @@ import jwt, { SignOptions } from  'jsonwebtoken';
 import { StringValue } from 'ms'
 
 
-export default class WebtokenService {
+export default class WebTokenService {
     private tokenKey: string;
     constructor() {
         if(!process.env.TOKEN_KEY) {
