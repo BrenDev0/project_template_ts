@@ -8,7 +8,7 @@ import { generateRoutes } from './templates/routes';
 
 const moduleName = process.argv[2];
 if (!moduleName) {
-  console.error('❌ Please provide a module name.');
+  console.error('Please provide a module name.');
   process.exit(1);
 }
 
