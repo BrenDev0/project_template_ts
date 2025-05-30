@@ -6,32 +6,26 @@ const singularPascal = singular[0].toUpperCase() + singular.slice(1);
 
   return `
 import { Request, Response } from "express";
-import Controller from "../../core/class/Controller";
+import HttpService from "../../core/services/HttpService"
 import { BadRequestError, NotFoundError } from "../../core/errors/errors";
 import ${pascal}Service from "./${pascal}Service";
 import { ${singularPascal}Data } from "./${moduleName}.interface";
 
-export default class ${pascal}Controller extends Controller { 
+export default class ${pascal}Controller { 
   private ${camel}Service: ${pascal}Service;  
   private block = "${moduleName}.controller"; 
+  private httpService: HttpService;
 
-  constructor(${camel}Service: ${pascal}Service) {
-    super();
+  constructor(${camel}Service: ${pascal}Service, httpService: HttpService) {
     this.${camel}Service = ${camel}Service;
+    this.httpService = httpService;
   }
 
   async createRequest(req: Request, res: Response): Promise<void> {
     const block = \`\${this.block}.createRequest\`;
     try {
-      const {  } = req.body;
-     
+      const requiredFields = [""];
 
-      if () {
-        throw new BadRequestError(undefined, {
-          block: \`\${block}.dataValidation\`,
-          request: req.body,
-        });
-      }
 
       const ${singular}Data = {
     

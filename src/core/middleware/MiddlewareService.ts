@@ -1,20 +1,20 @@
 import { NextFunction, Request, Response } from "express";
-import Controller from "../class/Controller";
 import AppError from '../errors/AppError';
 import { AuthenticationError, AuthorizationError } from "../../core/errors/errors";
 import { ENVVariableError } from "../errors/errors";
 import UsersService from "../../modules/users/UsersService";
 import ErrorHandler from "../errors/ErrorHandler";
 import crypto from 'crypto';
+import WebTokenService from "../services/WebtokenService";
 
-export default class MiddlewareService extends Controller {
+export default class MiddlewareService {
     private usersService: UsersService;
     private errorHandler: ErrorHandler;
-
-    constructor(usersService: UsersService, errorHanlder: ErrorHandler) {
-        super();
+    private webtokenService: WebTokenService;
+    constructor(usersService: UsersService, errorHanlder: ErrorHandler, webtokenService: WebTokenService) {
         this.usersService = usersService;
         this.errorHandler = errorHanlder;
+        this.webtokenService = webtokenService;
     }
 
     async auth(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -59,7 +59,7 @@ export default class MiddlewareService extends Controller {
                 })
             }
            
-            (req as any).user = user;
+            req.user = user;
             next();
         } catch (error) {
             next(error); 
@@ -147,28 +147,29 @@ export default class MiddlewareService extends Controller {
     }
 
     async handleErrors(error: unknown, req: Request, res: Response, next: NextFunction): Promise<void> {
+        const defaultErrorMessage = "Unable to process request at this time";
         try {
             await this.errorHandler.handleError(error);
     
             if (error instanceof AppError) {
                 res.status(error.statusCode).json({
                     success: false,
-                    message: error.statusCode === 500 ? this.errorMessage : error.message,
-                    //...(process.env.NODE_ENV === 'development' ? { stack: error.stack } : {}),
+                    message: error.statusCode === 500 ? defaultErrorMessage : error.message,
+                    ...(process.env.NODE_ENV === 'development' ? { context: error.context } : {})
                 });
                 return; 
             }
     
             res.status(500).json({
                 success: false,
-                message: this.errorMessage,
+                message: defaultErrorMessage,
                 //...(process.env.NODE_ENV === 'development' ? { stack: (error as Error).stack } : {}),
             });
         } catch (loggingError) {
             console.error('Error handling failed:', loggingError);
             res.status(500).json({
                 success: false,
-                message: this.errorMessage,
+                message: defaultErrorMessage,
             });
             return
         }
